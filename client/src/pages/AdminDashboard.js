@@ -49,7 +49,7 @@ const AdminDashboard = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/api/doctors');
+      const response = await axios.get('https://where-is-my-doctor.onrender.com/api/doctors');
       setDoctors(response.data);
     } catch (err) {
       setError('Failed to fetch doctors');
@@ -110,7 +110,7 @@ const AdminDashboard = () => {
 
       if (selectedDoctor) {
         await axios.put(
-          `http://localhost:5001/api/doctors/${selectedDoctor._id}`,
+          `https://where-is-my-doctor.onrender.com/api/doctors/${selectedDoctor._id}`,
           doctorData,
           {
             headers: { Authorization: `Bearer ${token}` }
@@ -118,7 +118,7 @@ const AdminDashboard = () => {
         );
       } else {
         await axios.post(
-          'http://localhost:5001/api/doctors',
+          'https://where-is-my-doctor.onrender.com/api/doctors',
           doctorData,
           {
             headers: { Authorization: `Bearer ${token}` }
@@ -140,7 +140,7 @@ const AdminDashboard = () => {
     if (!window.confirm('Are you sure you want to delete this doctor?')) return;
 
     try {
-      await axios.delete(`http://localhost:5001/api/doctors/${id}`, {
+      await axios.delete(`https://where-is-my-doctor.onrender.com/api/doctors/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchDoctors();
@@ -163,7 +163,7 @@ const AdminDashboard = () => {
     try {
       setBookingsLoading(true);
       setBookingsError('');
-      const response = await axios.get('http://localhost:5001/api/bookings', {
+      const response = await axios.get('https://where-is-my-doctor.onrender.com/api/bookings', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setBookings(response.data);
@@ -179,7 +179,7 @@ const AdminDashboard = () => {
     try {
       setBookingsLoading(true);
       setBookingsError('');
-      const response = await axios.get(`http://localhost:5001/api/bookings/service/${serviceType}`, {
+      const response = await axios.get(`https://where-is-my-doctor.onrender.com/api/bookings/service/${serviceType}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setBookings(response.data);
@@ -193,7 +193,7 @@ const AdminDashboard = () => {
   
   const updateBookingStatus = async (id, status) => {
     try {
-      await axios.put(`http://localhost:5001/api/bookings/${id}/status`, 
+      await axios.put(`https://where-is-my-doctor.onrender.com/api/bookings/${id}/status`, 
         { status },
         { headers: { Authorization: `Bearer ${token}` }}
       );
@@ -214,7 +214,7 @@ const AdminDashboard = () => {
     if (!window.confirm('Are you sure you want to delete this booking?')) return;
     
     try {
-      await axios.delete(`http://localhost:5000/api/bookings/${id}`, {
+      await axios.delete(`https://where-is-my-doctor.onrender.com/api/bookings/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
