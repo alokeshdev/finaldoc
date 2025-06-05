@@ -170,7 +170,7 @@ const Home = () => {
     };
 
     try {
-      await axios.post('http://localhost:5001/api/bookings', bookingData);
+      await axios.post('https://where-is-my-doctor.onrender.com/api/bookings', bookingData);
       setBookingSuccess(true);
       setBookingError(null);
       
