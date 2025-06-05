@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#e6f7ff" />
+    </linearGradient>
+    
+    <!-- Pattern for medical symbols -->
+    <pattern id="medical-pattern" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
+      <!-- Heartbeat line -->
+      <path d="M0,100 L40,100 L60,60 L80,140 L100,100 L200,100" stroke="#dbeafe" stroke-width="2" fill="none" />
+      
+      <!-- Medical cross -->
+      <path d="M160,70 L160,90 L140,90 L140,110 L160,110 L160,130 L180,130 L180,110 L200,110 L200,90 L180,90 L180,70 Z" fill="#bfdbfe" opacity="0.5" />
+      
+      <!-- Stethoscope icon -->
+      <path d="M40,40 C40,30 50,30 50,40 L50,60 C50,70 70,70 70,60 C70,50 60,50 60,60" stroke="#bfdbfe" stroke-width="2" fill="none" />
+      
+      <!-- DNA helix simplified -->
+      <path d="M20,160 C30,150 40,170 50,160 C60,150 70,170 80,160" stroke="#dbeafe" stroke-width="2" fill="none" />
+      
+      <!-- Pill shape -->
+      <ellipse cx="120" cy="40" rx="15" ry="8" fill="#bfdbfe" opacity="0.5" />
+    </pattern>
+  </defs>
+  
+  <!-- Main background -->
+  <rect width="100%" height="100%" fill="url(#bg-gradient)" />
+  
+  <!-- Medical pattern overlay -->
+  <rect width="100%" height="100%" fill="url(#medical-pattern)" opacity="0.7" />
+  
+  <!-- Abstract wave shapes -->
+  <path d="M0,400 C400,300 800,500 1200,400 C1600,300 2000,450 2400,400 L2400,1080 L0,1080 Z" fill="#eff6ff" opacity="0.7" />
+  <path d="M0,600 C500,500 1000,700 1500,600 C2000,500 2500,650 3000,600 L3000,1080 L0,1080 Z" fill="#dbeafe" opacity="0.5" />
+  
+  <!-- Medical cross accent -->
+  <path d="M1700,200 L1700,150 L1650,150 L1650,100 L1750,100 L1750,150 L1800,150 L1800,250 L1750,250 L1750,300 L1650,300 L1650,250 L1700,250 Z" fill="#3b82f6" opacity="0.1" />
+  
+  <!-- Heartbeat line accent -->
+  <path d="M100,800 L300,800 L400,700 L500,900 L600,800 L900,800" stroke="#3b82f6" stroke-width="4" fill="none" opacity="0.2" />
+</svg>
