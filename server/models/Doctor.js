@@ -44,6 +44,12 @@ const doctorSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    followUpFee: {
+        type: Number,
+        default: function() {
+            return this.fees;
+        }
+    },
     availability: {
         type: String,
         required: true,
@@ -52,6 +58,33 @@ const doctorSchema = new mongoose.Schema({
     featured: {
         type: Boolean,
         default: false
+    },
+    qualifications: {
+        mbbs: {
+            type: String,
+            trim: true
+        },
+        md: {
+            type: String,
+            trim: true
+        },
+        dm: {
+            type: String,
+            trim: true
+        }
+    },
+    experience: {
+        type: Number,
+        default: 0
+    },
+    schedule: {
+        sunday: String,
+        monday: String,
+        tuesday: String,
+        wednesday: String,
+        thursday: String,
+        friday: String,
+        saturday: String
     },
     coordinates: {
         type: {

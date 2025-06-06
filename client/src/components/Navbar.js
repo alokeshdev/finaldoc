@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FaUserMd, FaSignInAlt, FaUserPlus, FaTachometerAlt, FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa';
+import { FaUserMd, FaSignInAlt, FaUserPlus, FaTachometerAlt, FaSignOutAlt, FaBars, FaTimes, FaSearch } from 'react-icons/fa';
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useAuth();
@@ -39,9 +39,13 @@ const Navbar = () => {
           </div>
           
           {/* Desktop menu */}
-          <div className="hidden md:flex space-x-6 items-center">
+          <div className="hidden md:flex items-center space-x-4">
             <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition flex items-center gap-1 px-3 py-2 rounded-md hover:bg-blue-50">
               Home
+            </Link>
+            <Link to="/#search" className="text-gray-700 hover:text-blue-600 font-medium transition flex items-center gap-1 px-3 py-2 rounded-md hover:bg-blue-50">
+              <FaSearch className="text-blue-500" />
+              Find Doctor
             </Link>
             {isAuthenticated ? (
               <>
@@ -77,6 +81,10 @@ const Navbar = () => {
           <div className="md:hidden py-4 border-t border-gray-200 animate-fadeIn">
             <Link to="/" className="block py-2 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md">
               Home
+            </Link>
+            <Link to="/#search" className="block py-2 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md flex items-center gap-2">
+              <FaSearch className="text-blue-500" />
+              Find Doctor
             </Link>
             {isAuthenticated ? (
               <>

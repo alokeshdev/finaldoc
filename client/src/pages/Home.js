@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaSearch, FaMapMarkerAlt, FaStethoscope, FaMoneyBillWave, FaUser, FaHeartbeat, FaWalking, FaBaby, FaBrain, FaEye, FaTooth, FaHandHoldingMedical, FaProcedures, FaHospital, FaFlask, FaVial, FaNotesMedical, FaCalendarAlt, FaPhoneAlt, FaPlus, FaHeart, FaPills, FaSyringe, FaXRay, FaWheelchair, FaUserMd } from 'react-icons/fa';
+import { FaSearch, FaMapMarkerAlt, FaStethoscope, FaMoneyBillWave, FaUser, FaHeartbeat, FaWalking, FaBaby, FaBrain, FaEye, FaTooth, FaHandHoldingMedical, FaProcedures, FaHospital, FaFlask, FaVial, FaNotesMedical, FaCalendarAlt, FaPhoneAlt, FaPlus, FaHeart, FaPills, FaSyringe, FaXRay, FaWheelchair, FaUserMd, FaStar, FaGraduationCap, FaTimes, FaClock } from 'react-icons/fa';
 
 const Home = () => {
   const [searchParams, setSearchParams] = useState({
@@ -14,6 +14,7 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  const [showAllDoctors, setShowAllDoctors] = useState(false);
   const [bookingForm, setBookingForm] = useState({
     name: '',
     phone: '',
@@ -65,6 +66,8 @@ const Home = () => {
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingError, setBookingError] = useState(null);
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const specialties = [
     { id: 'cardiology', name: 'Cardiology', searchTerm: 'Cardiology', icon: <FaHeartbeat />, color: 'red' },
@@ -76,6 +79,38 @@ const Home = () => {
     { id: 'dentistry', name: 'Dentistry', searchTerm: 'Dentist', icon: <FaTooth />, color: 'cyan' },
     { id: 'surgery', name: 'Surgery', searchTerm: 'Surgery', icon: <FaProcedures />, color: 'indigo' },
   ];
+
+  useEffect(() => {
+    const fetchFeaturedDoctors = async () => {
+      try {
+        const response = await axios.get('http://localhost:5001/api/doctors/featured');
+        setFeaturedDoctors(response.data);
+      } catch (err) {
+        console.error('Failed to fetch featured doctors:', err);
+      }
+    };
+
+    fetchFeaturedDoctors();
+  }, []);
+
+  useEffect(() => {
+    const fetchAllDoctors = async () => {
+      if (showAllDoctors) {
+        setLoading(true);
+        try {
+          const response = await axios.get('http://localhost:5001/api/doctors');
+          setDoctors(response.data);
+        } catch (err) {
+          console.error('Failed to fetch doctors:', err);
+          setError('Failed to fetch doctors');
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchAllDoctors();
+  }, [showAllDoctors]);
 
   const handleSearchInputChange = (e) => {
     const { name, value } = e.target;
@@ -230,6 +265,136 @@ const Home = () => {
     }
   };
 
+  const DoctorModal = ({ doctor, onClose }) => {
+    if (!doctor) return null;
+
+    const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const today = new Date().getDay();
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="p-6">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-blue-600 flex items-center gap-2">
+                  <FaUserMd className="text-3xl" />
+                  Dr. {doctor.name}
+                </h2>
+                <span className="inline-block bg-blue-50 text-blue-600 text-sm px-3 py-1 rounded-full mt-2">
+                  {doctor.specialty}
+                </span>
+              </div>
+              <button
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                <FaTimes className="text-2xl" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Left Column - Basic Info */}
+              <div className="space-y-4">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <FaHospital /> Hospital Information
+                  </h3>
+                  <p className="text-gray-600">{doctor.hospitalName}</p>
+                  <p className="text-gray-600">{doctor.address}</p>
+                  <p className="text-gray-600">{doctor.city}, {doctor.state}</p>
+                  <p className="text-gray-600 flex items-center gap-2 mt-2">
+                    <FaPhoneAlt /> {doctor.phone}
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <FaGraduationCap /> Qualifications
+                  </h3>
+                  <ul className="list-disc list-inside text-gray-600 space-y-2">
+                    <li>MBBS - {doctor.qualifications?.mbbs || 'Not specified'}</li>
+                    <li>MD - {doctor.qualifications?.md || 'Not specified'}</li>
+                    <li>DM - {doctor.qualifications?.dm || 'Not specified'}</li>
+                    <li>Experience: {doctor.experience || 'Not specified'} years</li>
+                  </ul>
+                </div>
+
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <FaMoneyBillWave /> Fee Information
+                  </h3>
+                  <p className="text-gray-600">Consultation Fee: ₹{doctor.fees}</p>
+                  <p className="text-gray-600">Follow-up Fee: ₹{doctor.followUpFee || doctor.fees}</p>
+                </div>
+              </div>
+
+              {/* Right Column - Schedule */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                  <FaCalendarAlt /> Weekly Schedule
+                </h3>
+                <div className="space-y-3">
+                  {weekDays.map((day, index) => {
+                    const isToday = index === today;
+                    const schedule = doctor.schedule?.[day.toLowerCase()] || 'Not Available';
+                    return (
+                      <div
+                        key={day}
+                        className={`p-3 rounded-lg ${
+                          isToday ? 'bg-blue-100 border border-blue-200' : 'bg-white'
+                        }`}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className={`font-medium ${isToday ? 'text-blue-600' : 'text-gray-700'}`}>
+                            {day} {isToday && '(Today)'}
+                          </span>
+                          <span className="text-gray-600 flex items-center gap-2">
+                            <FaClock />
+                            {schedule}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Symptoms Treated */}
+            <div className="mt-6 bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                <FaStethoscope /> Symptoms Treated
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {doctor.symptomsTreated && doctor.symptomsTreated.map((symptom, idx) => (
+                  <span key={idx} className="bg-blue-50 text-blue-600 text-sm px-3 py-1 rounded-full">
+                    {symptom}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="mt-6 flex gap-4">
+              <button className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                <FaCalendarAlt /> Book Appointment
+              </button>
+              <button className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
+                <FaPhoneAlt /> Contact
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const handleDoctorClick = (doctor) => {
+    setSelectedDoctor(doctor);
+    setShowModal(true);
+  };
+
   return (
     <div className="relative min-h-screen">
       {/* Medical Background Pattern */}
@@ -376,51 +541,125 @@ const Home = () => {
 
         {/* Rest of the content */}
         <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
-          {/* Doctor List */}
-          {loading ? (
-            <div className="text-center text-base md:text-lg">Loading...</div>
-          ) : error ? (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm md:text-base">{error}</div>
-          ) : doctors.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-8 md:mb-12">
-              {doctors.map((doctor) => (
-                <div key={doctor._id} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 md:p-6 flex flex-col justify-between border border-blue-100 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
-                  <div>
-                    <h2 className="text-lg md:text-xl font-bold text-blue-600 flex items-center gap-2 mb-1">
-                      <FaUser /> {doctor.name}
-                    </h2>
-                    <span className="inline-block bg-blue-50 text-blue-600 text-xs px-2 py-1 rounded-full mb-2">
-                      {doctor.specialty}
-                    </span>
-                    <p className="text-sm md:text-base text-gray-600 mb-1 flex items-center">
-                      <FaHospital className="mr-1" /> {doctor.hospitalName}
-                    </p>
-                    <p className="text-sm md:text-base text-gray-500 mb-1">{doctor.address}, {doctor.city}, {doctor.state}</p>
-                    <p className="text-sm md:text-base text-gray-500 mb-1 flex items-center">
-                      <FaPhoneAlt className="mr-1" /> {doctor.phone}
-                    </p>
-                    <p className="text-sm md:text-base text-gray-500 mb-1 flex items-center">
-                      <FaMoneyBillWave className="mr-1" /> Fees: <span className="font-semibold ml-1">₹{doctor.fees}</span>
-                    </p>
-                    <p className="text-sm md:text-base text-gray-500 mb-1 flex items-center">
-                      <FaCalendarAlt className="mr-1" /> {doctor.availability}
-                    </p>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {doctor.symptomsTreated && doctor.symptomsTreated.map((sym, idx) => (
-                        <span key={idx} className="bg-blue-50 text-blue-600 text-xs px-2 py-1 rounded-full">
-                          {sym}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+          {/* Featured Doctors Section */}
+          <div id="search" className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <div className="w-10 h-1 bg-yellow-500 rounded-full mr-4"></div>
+                <h2 className="text-3xl font-bold text-yellow-700">Featured Doctors</h2>
+              </div>
+              <button
+                onClick={() => setShowAllDoctors(!showAllDoctors)}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              >
+                <FaSearch />
+                {showAllDoctors ? 'Show Featured Only' : 'Show All Doctors'}
+              </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+              {loading ? (
+                <div className="col-span-full text-center py-6">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                  <p className="mt-4 text-gray-600">Loading doctors...</p>
                 </div>
-              ))}
+              ) : error ? (
+                <div className="col-span-full text-center text-red-600 py-6">
+                  {error}
+                </div>
+              ) : showAllDoctors ? (
+                doctors.length > 0 ? (
+                  doctors.map((doctor) => (
+                    <div
+                      key={doctor._id}
+                      onClick={() => handleDoctorClick(doctor)}
+                      className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 md:p-6 flex flex-col justify-between border border-blue-100 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] cursor-pointer"
+                    >
+                      <div>
+                        <h2 className="text-lg md:text-xl font-bold text-blue-600 flex items-center gap-2 mb-2">
+                          <FaUser /> {doctor.name}
+                        </h2>
+                        <span className="inline-block bg-blue-50 text-blue-600 text-xs px-2 py-1 rounded-full mb-2">
+                          {doctor.specialty}
+                        </span>
+                        <p className="text-sm md:text-base text-gray-600 mb-1 flex items-center">
+                          <FaHospital className="mr-1" /> {doctor.hospitalName}
+                        </p>
+                        <p className="text-sm md:text-base text-gray-500 mb-1">{doctor.address}, {doctor.city}, {doctor.state}</p>
+                        <p className="text-sm md:text-base text-gray-500 mb-1 flex items-center">
+                          <FaPhoneAlt className="mr-1" /> {doctor.phone}
+                        </p>
+                        <p className="text-sm md:text-base text-gray-500 mb-1 flex items-center">
+                          <FaMoneyBillWave className="mr-1" /> Fees: <span className="font-semibold ml-1">₹{doctor.fees}</span>
+                        </p>
+                        <p className="text-sm md:text-base text-gray-500 mb-1 flex items-center">
+                          <FaCalendarAlt className="mr-1" /> {doctor.availability}
+                        </p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {doctor.symptomsTreated && doctor.symptomsTreated.map((sym, idx) => (
+                            <span key={idx} className="bg-blue-50 text-blue-600 text-xs px-2 py-1 rounded-full">
+                              {sym}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center text-gray-600 py-6">
+                    No doctors found.
+                  </div>
+                )
+              ) : (
+                featuredDoctors && featuredDoctors.length > 0 ? (
+                  featuredDoctors.map((doctor) => (
+                    <div
+                      key={doctor._id}
+                      onClick={() => handleDoctorClick(doctor)}
+                      className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 md:p-6 flex flex-col justify-between border border-yellow-100 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] cursor-pointer"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <h2 className="text-lg md:text-xl font-bold text-yellow-600 flex items-center gap-2">
+                            <FaUser /> {doctor.name}
+                          </h2>
+                          <span className="flex items-center text-yellow-500">
+                            <FaStar /> Featured
+                          </span>
+                        </div>
+                        <span className="inline-block bg-yellow-50 text-yellow-600 text-xs px-2 py-1 rounded-full mb-2">
+                          {doctor.specialty}
+                        </span>
+                        <p className="text-sm md:text-base text-gray-600 mb-1 flex items-center">
+                          <FaHospital className="mr-1" /> {doctor.hospitalName}
+                        </p>
+                        <p className="text-sm md:text-base text-gray-500 mb-1">{doctor.address}, {doctor.city}, {doctor.state}</p>
+                        <p className="text-sm md:text-base text-gray-500 mb-1 flex items-center">
+                          <FaPhoneAlt className="mr-1" /> {doctor.phone}
+                        </p>
+                        <p className="text-sm md:text-base text-gray-500 mb-1 flex items-center">
+                          <FaMoneyBillWave className="mr-1" /> Fees: <span className="font-semibold ml-1">₹{doctor.fees}</span>
+                        </p>
+                        <p className="text-sm md:text-base text-gray-500 mb-1 flex items-center">
+                          <FaCalendarAlt className="mr-1" /> {doctor.availability}
+                        </p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {doctor.symptomsTreated && doctor.symptomsTreated.map((sym, idx) => (
+                            <span key={idx} className="bg-yellow-50 text-yellow-600 text-xs px-2 py-1 rounded-full">
+                              {sym}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center text-gray-600 py-6">
+                    No featured doctors available at the moment.
+                  </div>
+                )
+              )}
             </div>
-          ) : (
-            <div className="text-center text-gray-600 py-6 md:py-8 text-sm md:text-base">
-              {selectedSpecialty ? `No doctors found for ${selectedSpecialty}` : 'No doctors found. Try adjusting your search criteria.'}
-            </div>
-          )}
+          </div>
 
           {/* Physiotherapy Services */}
           <div className="mb-12">
@@ -857,6 +1096,17 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      {/* Doctor Details Modal */}
+      {showModal && selectedDoctor && (
+        <DoctorModal
+          doctor={selectedDoctor}
+          onClose={() => {
+            setShowModal(false);
+            setSelectedDoctor(null);
+          }}
+        />
+      )}
     </div>
   );
 };
