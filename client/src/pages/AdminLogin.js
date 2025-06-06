@@ -17,7 +17,7 @@ const AdminLogin = () => {
 
     try {
       console.log('Attempting login with:', credentials.email);
-      const response = await axios.post('http://localhost:5001/api/auth/login', credentials);
+      const response = await axios.post('https://where-is-my-doctor.onrender.com/api/auth/login', credentials);
       console.log('Login response:', response.data);
 
       if (response.data.token && response.data.user) {

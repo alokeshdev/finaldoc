@@ -34,7 +34,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5001/api/auth/signup', {
+      const response = await axios.post('https://where-is-my-doctor.onrender.com/api/auth/signup', {
         name: formData.name,
         email: formData.email,
         password: formData.password

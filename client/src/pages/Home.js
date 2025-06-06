@@ -128,7 +128,7 @@ const Home = () => {
     setError('');
     try {
       console.log('Searching with params:', searchParams); // Debug log
-      const response = await axios.get('http://localhost:5001/api/doctors/search', {
+      const response = await axios.get('https://where-is-my-doctor.onrender.com/api/doctors/search', {
         params: searchParams,
       });
       console.log('Search response:', response.data); // Debug log
@@ -205,7 +205,7 @@ const Home = () => {
     };
 
     try {
-      await axios.post('http://localhost:5001/api/bookings', bookingData);
+      await axios.post('https://where-is-my-doctor.onrender.com/api/bookings', bookingData);
       setBookingSuccess(true);
       setBookingError(null);
       
